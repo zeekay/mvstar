@@ -4,8 +4,8 @@ prototype =
   autoRender: true
 
   initialize: (object) ->
-    if object.constructor.name == 'Object' and @Model?
-      @model = new @Model object
+    if object.constructor.name == 'Object' and @model?
+      @model = new @model object
     else
       @model = object
 
