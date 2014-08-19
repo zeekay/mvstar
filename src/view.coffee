@@ -14,14 +14,18 @@ prototype =
     if @autoRender
       @render object
 
+  cacheTemplate: ->
+    # Cache on prototype so it can be reused
+    @::_cachedEl = el
+
   renderTemplate: (ctx) ->
-    if @_cachedEl?
+    if @_cachedEl? and cache
       # Clone node, rather than re-rendering template for each instance.
       @el = @_cachedEl.cloneNode true
       return @
 
     # Generate element template
-    el = @template.call @
+    el = @template.call @, ctx
 
     # Coerce strings to HTML dom fragments
     if typeof el is 'string' or el instanceof String
@@ -29,22 +33,26 @@ prototype =
       div.insertAdjacentHTML 'afterbegin', el
       el = div.removeChild childNodes[0]
 
-    # Cache on prototype so it can be reused
-    @el = @::_cachedEl = el
-
-    @
+    # Use el
+    @el = el
 
   render: (ctx) ->
     @renderTemplate ctx
+    @cacheTemplate()
+
     for prop, fn in @bindings
       if (value = @model[prop]?)
         fn.call @, value
 
+    @
+
   remove: ->
     parent = @el.parentNode
     parent.removeChild @el if parent
+    @
 
-  template: -> '<div></div>'
+  template: ->
+    '<div></div>'
 
 module.exports =
   View: (options) ->
