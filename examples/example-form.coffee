@@ -25,8 +25,8 @@ FormView = View
 InputView = View
   model: Input
   bindings:
-    name:  (@name)  ->
-    value: (@value) ->
+    name:  (name)  -> @el.name = name
+    value: (value) -> @el.value = value
   template: -> '<input></input>'
 
 # Usage

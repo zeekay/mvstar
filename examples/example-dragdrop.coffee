@@ -15,23 +15,22 @@ Dropzone = Model
 
 ImgView = Draggable View
   model: Img
-  map:
-    src:    (@src)    ->
-    height: (@height) ->
-    width:  (@width)  ->
-  template: ->
-    '<img draggable="true">'
+  bindings:
+    src:    (src)    -> @el.src    = src
+    height: (height) -> @el.height = height
+    width:  (width)  -> @el.width  = width
+  template: -> '<img>'
 
 DropzoneView = Droppable View
   model: Dropzone
-  map:
+  bindings:
     dropped: (dropped) ->
       span = @querySelector '.dropped'
-      span.innerHTML = dropped.join(', ')
-  on:
+      span.innerHTML = (d.el for d in dropped).join(', ')
+  events:
     dropped: (event, dropped) ->
       @model.dropped.push dropped
-      @appendChild dropped
+      @el.appendChild dropped
   template: ->
     '''
     <div>
