@@ -1,19 +1,38 @@
-proto =
-  render: ->
+observe = require './observe'
+
+prototype =
+  autoRender: true
+
+  initialize: (object) ->
+    if object.constructor.name == 'Object' and @Model?
+      @model = new @Model object
+    else
+      @model = object
+
+    observe @model, @bindings, @
+
+    if @autoRender
+      @render object
+
+  render: (ctx) ->
+    @el = @template.apply @, ctx
+    @
+
   remove: ->
+    parent = @el.parentNode
+    parent.removeChild @el if parent
+
+  template: -> '<div></div>'
 
 module.exports =
   View: (options) ->
-    View = (obj = {}) ->
+    View = (object = {}) ->
       unless @ instanceof View
-        return new View obj
+        return new View object
 
-      if obj.constructor.name == 'Object' and @Model?
-        @model = new @Model obj
-      else
-        @model = obj
+      @initialize object
 
-    View:: = Object.create proto
+    View:: = Object.create prototype
     View::constructor = View
 
     for k,v of options
