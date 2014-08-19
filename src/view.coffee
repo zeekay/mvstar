@@ -1,16 +1,22 @@
-class View
-  constructor: (obj) ->
-    unless @ instanceof View
-      return new View obj
-
-    if obj.constructor.name == 'Object' and @Model?
-      @model = new @Model obj
-    else
-      @model = obj
+proto =
+  render: ->
+  remove: ->
 
 module.exports =
   View: (options) ->
-    class _View extends View
+    View = (obj = {}) ->
+      unless @ instanceof View
+        return new View obj
+
+      if obj.constructor.name == 'Object' and @Model?
+        @model = new @Model obj
+      else
+        @model = obj
+
+    View:: = Object.create proto
+    View::constructor = View
+
     for k,v of options
-      _View::[k] = v
-    _View
+      View::[k] = v
+
+    View

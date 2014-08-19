@@ -1,7 +1,4 @@
-class Model
-  constructor: (obj) ->
-    unless @ instanceof Model
-      return new Model obj
+proto =
   validates: (prop, fn) ->
     @validators[prop] = fn
   validate: ->
@@ -12,7 +9,21 @@ class Model
 
 module.exports =
   Model: (options) ->
-    class _Model extends Model
+    Model = (obj = {}) ->
+      unless @ instanceof Model
+        return new Model obj
+
+      for k,v of @defaults
+        @[k] = v
+
+      for k,v of obj
+        @[k] = v
+      @
+
+    Model:: = Object.create proto
+    Model::constructor = Model
+
     for k,v of options
-      _Model::[k] = v
-    _Model
+      Model::[k] = v
+
+    Model
