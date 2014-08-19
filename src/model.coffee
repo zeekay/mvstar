@@ -1,6 +1,15 @@
-proto =
+prototype =
+  initialize: (object) ->
+    for k,v of @defaults
+      @[k] = v
+
+    for k,v of object
+      @[k] = v
+    @
+
   validates: (prop, fn) ->
     @validators[prop] = fn
+
   validate: ->
     for prop, fn of @validators
       unless fn @[prop]
@@ -9,18 +18,13 @@ proto =
 
 module.exports =
   Model: (options) ->
-    Model = (obj = {}) ->
+    Model = (object = {}) ->
       unless @ instanceof Model
-        return new Model obj
+        return new Model object
 
-      for k,v of @defaults
-        @[k] = v
+      @initialize object
 
-      for k,v of obj
-        @[k] = v
-      @
-
-    Model:: = Object.create proto
+    Model:: = Object.create prototype
     Model::constructor = Model
 
     for k,v of options
