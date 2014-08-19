@@ -14,7 +14,7 @@ prototype =
     if @autoRender
       @render object
 
-  renderTemplate: ->
+  renderTemplate: (ctx) ->
     if @_cachedEl?
       # Clone node, rather than re-rendering template for each instance.
       @el = @_cachedEl.cloneNode true
@@ -34,8 +34,8 @@ prototype =
 
     @
 
-  render: ->
-    @renderTemplate()
+  render: (ctx) ->
+    @renderTemplate ctx
     for prop, fn in @bindings
       if (value = @model[prop]?)
         fn.call @, value
