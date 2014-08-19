@@ -14,15 +14,14 @@ prototype =
     if @autoRender
       @render object
 
-  cacheTemplate: ->
+  cacheTemplate: (el) ->
     # Cache on prototype so it can be reused
     @::_cachedEl = el
 
   renderTemplate: (ctx) ->
     if @_cachedEl? and cache
       # Clone node, rather than re-rendering template for each instance.
-      @el = @_cachedEl.cloneNode true
-      return @
+      return @_cachedEl.cloneNode true
 
     # Generate element template
     el = @template.call @, ctx
@@ -34,11 +33,11 @@ prototype =
       el = div.removeChild childNodes[0]
 
     # Use el
-    @el = el
+    el
 
-  render: (ctx) ->
-    @renderTemplate ctx
-    @cacheTemplate()
+  render: (ctx, cache=true) ->
+    @el = @renderTemplate ctx
+    @cacheTemplate @el if cache
 
     for prop, fn in @bindings
       if (value = @model[prop]?)
