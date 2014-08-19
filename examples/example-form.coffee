@@ -13,18 +13,18 @@ Input = Model
 
 FormView = View
   model: Form
-  map:
+  bindings:
     'inputs': (inputs) ->
-      @appendChild input for input in inputs
+      @el.appendChild input for input in inputs
     'inputs:add': (inputs, added) ->
-      @appendChild added
+      @el.appendChild added
     'inputs:delete': (inputs, deleted) ->
-      @removeChild deleted
+      @el.removeChild deleted
   template: -> '<form></form>'
 
 InputView = View
   model: Input
-  map:
+  bindings:
     name:  (@name)  ->
     value: (@value) ->
   template: -> '<input></input>'

@@ -14,9 +14,31 @@ prototype =
     if @autoRender
       @render object
 
-  render: (ctx) ->
-    @el = @template.apply @, ctx
+  renderTemplate: ->
+    if @_cachedEl?
+      # Clone node, rather than re-rendering template for each instance.
+      @el = @_cachedEl.cloneNode true
+      return @
+
+    # Generate element template
+    el = @template.call @
+
+    # Coerce strings to HTML dom fragments
+    if typeof el is 'string' or el instanceof String
+      div = createElement 'div'
+      div.insertAdjacentHTML 'afterbegin', el
+      el = div.removeChild childNodes[0]
+
+    # Cache on prototype so it can be reused
+    @el = @::_cachedEl = el
+
     @
+
+  render: ->
+    @renderTemplate()
+    for prop, fn in @bindings
+      if (value = @model[prop]?)
+        fn.call @, value
 
   remove: ->
     parent = @el.parentNode
