@@ -15,7 +15,7 @@ observe = (object, bindings, bind) ->
           when 'delete'
             fn.call bind, object, oldValue
 
-      if (fn = bindings[name])?
+      if (fn = bindings[name + ':*'])?
           fn.call bind, object,
             type:     type
             newValue: newValue
