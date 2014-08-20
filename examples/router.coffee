@@ -1,4 +1,4 @@
-{View, Router} = require './mvstar'
+{App, View, Router} = require './mvstar'
 
 ImageView = View
   model:    Image
@@ -13,7 +13,7 @@ SearchView = View
     </form>
     '''
 
-Home = AppView
+Home = App
   views:
     SearchView:  '#search-view'
     BrowserView: '#content'
