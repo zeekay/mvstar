@@ -1,6 +1,7 @@
 exec = require('executive').interactive
 
-option '-g', '--grep [filter]', 'test filter'
+option '-b', '--browser',                                                'run tests in browser'
+option '-g', '--grep [filter]',                                          'test filter'
 option '-v', '--version [<newversion> | major | minor | patch | build]', 'new version'
 
 task 'clean', 'clean project', (options) ->
@@ -22,14 +23,24 @@ task 'test', 'run tests', (options) ->
   else
     grep = ''
 
-  exec "NODE_ENV=test ./node_modules/.bin/mocha
-      --colors
-      --reporter spec
-      --timeout 5000
-      --compilers coffee:coffee-script/register
-      --require postmortem/register
-      #{grep}
-      #{test}"
+  if options.browser
+    exec "./node_modules/.bin/mocha-http
+          --timeout 5000
+          --browser
+          #{test}"
+  else
+    exec "NODE_ENV=test ./node_modules/.bin/mocha
+        --colors
+        --reporter spec
+        --timeout 5000
+        --compilers coffee:coffee-script/register
+        --require postmortem/register
+        #{grep}
+        #{test}"
+
+task 'test:browser', 'run tests', (options) ->
+  options.browser = true
+  invoke 'test'
 
 task 'gh-pages', 'Publish docs to gh-pages', ->
   brief = require 'brief'
