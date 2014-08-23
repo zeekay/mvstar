@@ -14,7 +14,7 @@ ImgView = Draggable View
   # Cheap to completely mutate on change, no need to describe bindings, just
   # re-render entire view on any model changes.
   render: ->
-    @el[prop] = @model[prop] for prop in @model
+    @el[k] = v for own k,v of @model
   template: -> '<img>'
 
 Dropzone = Model
