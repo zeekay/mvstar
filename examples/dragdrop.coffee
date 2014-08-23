@@ -33,15 +33,15 @@ DropzoneView = Droppable View
         @el.appendChild d.el
 
     # Various state changes
-    'drops:add': (drop) ->
+    'drops:add': (d) ->
       @el.appendChild d.el
 
-    'drops:remove': (drop) ->
+    'drops:remove': (d) ->
       @el.removeChild d.el
 
   # Events update the model, but should not update the DOM (render does that).
   events:
-    dropped: (event, dropped) ->
-      @model.dropped.push dropped
+    dropped: (event, drop) ->
+      @model.drops.push drop
 
   template: -> '<div></div>'
