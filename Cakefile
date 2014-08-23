@@ -25,6 +25,7 @@ task 'test', 'run tests', (options) ->
     grep = ''
 
   if options.browser
+    test = test.substring(1)  # no need to use compiled JS
     exec "./node_modules/.bin/mocha-http
           --timeout 5000
           --browser
