@@ -10,7 +10,6 @@ Img = Model
     src: (src) -> src != ''
 
 ImgView = Draggable View
-  # If you des
   model: Img
   # Cheap to completely mutate on change, no need to describe bindings, just
   # re-render entire view on any model changes.
@@ -34,7 +33,6 @@ DropzoneView = Droppable View
     # Various state changes
     'drops:add': (d) ->
       @el.appendChild d.el
-
     'drops:remove': (d) ->
       @el.removeChild d.el
 
@@ -42,13 +40,14 @@ DropzoneView = Droppable View
   # to render/bindings.
   events:
     drop: (d) ->
-      @model.drops.push d
+      @addDrop d
+    dragstart: (d) ->
+      @removeDrop d
 
   # You should never mutate the DOM manually, just update the model and let
   # render/bindings do the work!
   removeDrop: (idx) ->
     @model.drops.pop idx
-
   addDrop: (d) ->
     @model.drops.push d
 
