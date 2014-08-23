@@ -41,7 +41,7 @@ DropzoneView = Droppable View
 
   # Events update the model, but should not update the DOM (render does that).
   events:
-    dropped: (event, drop) ->
-      @model.drops.push drop
+    drop: (d) ->
+      @model.drops.push d
 
   template: -> '<div></div>'
