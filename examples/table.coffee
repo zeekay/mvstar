@@ -15,20 +15,44 @@ Users = Collection
 
 Table = View
   collection: Users
-  template: -> '<table></table>'
+  template: -> '''
+  <div>
+    <table>
+    </table>
+  </div>
+  '''
   render: ->
-    for model in @collection
-      @el.appendChild (Row model).el
+    # Get column headers from properties of first model in collection
+    columns = (k for k,v of own @collection.first())
+    # Create a header using column
+    header = Header columns
+    # Bind to table
+    @bind 'table', header
+    # Bind rows to after header
+    rows = (Row model for model in @collection)
+    @bind('table').after header, rows
+
+Header = View
+  template: -> '<tr></tr>'
+  initialize: (@columns) ->
+  render: ->
+    @el.appendChild (Heading v) for v in @columns
+
+Heading = View
+  template: -> '<th></th>'
+  initialize: (@value) ->
+  render: ->
+    @el.innerHTML = @value
 
 Row = View
   model: User
   template: -> '<tr></tr>'
   render: ->
     for k,v of own @model
-      @el.appendChild (Cell @model, k)
+      @el.appendChild (Cell v)
 
 Cell = View
-  model: User
   template: -> '<td></td>'
+  initialize: (@value) ->
   render: ->
-    @el.innerHTML = @model[@column]
+    @el.innerHTML = @value
