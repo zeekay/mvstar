@@ -45,3 +45,11 @@ DropzoneView = Droppable View
       @model.drops.push d
 
   template: -> '<div></div>'
+
+# Create some dropzones
+dropzone1 = DropzoneView drops: [ImgView(), ImgView()]
+dropzone2 = DropzoneView()
+
+# Programmatically move a drop
+drop = dropzone1.model.drops.pop()
+dropzone2.model.drops.push drop
