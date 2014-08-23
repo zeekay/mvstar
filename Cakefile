@@ -2,6 +2,7 @@ exec = require('executive').interactive
 
 option '-b', '--browser',                                                'run tests in browser'
 option '-g', '--grep [filter]',                                          'test filter'
+option '-t', '--test [file]',                                            'test to run'
 option '-v', '--version [<newversion> | major | minor | patch | build]', 'new version'
 
 task 'clean', 'clean project', (options) ->
