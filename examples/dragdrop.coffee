@@ -11,12 +11,12 @@ Img = Model
 
 ImgView = Draggable View
   model: Img
+  template: -> '<img>'
   # Cheap to completely mutate on change, no need to describe bindings, just
   # re-render entire view on any model changes.
   render: ->
     @el[k] = v for own k,v of @model
     @
-  template: -> '<img>'
 
 Dropzone = Model
   defaults:
@@ -24,6 +24,7 @@ Dropzone = Model
 
 DropzoneView = Droppable View
   model: Dropzone
+  template: -> '<div></div>'
   # Expensive to re-render entire view, so we'll declare bindings to describe
   # how to re-render on model changes.
   render: ->
@@ -52,8 +53,6 @@ DropzoneView = Droppable View
     @model.drops.pop idx
   addDrop: (d) ->
     @model.drops.push d
-
-  template: -> '<div></div>'
 
 # Create some dropzones. Objects are used as initial state for declared models.
 # Rendering happens automatically.
