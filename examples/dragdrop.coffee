@@ -44,8 +44,8 @@ DropzoneView = Droppable View
     dragstart: (d) ->
       @removeDrop d
 
-  # You should never mutate the DOM manually, just update the model and let
-  # render/bindings do the work!
+  # You should never mutate the DOM outside of render/bindings, prefer to
+  # update the model instead.
   removeDrop: (idx) ->
     @model.drops.pop idx
   addDrop: (d) ->
