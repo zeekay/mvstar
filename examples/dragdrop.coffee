@@ -15,6 +15,7 @@ ImgView = Draggable View
   # re-render entire view on any model changes.
   render: ->
     @el[k] = v for own k,v of @model
+    @
   template: -> '<img>'
 
 Dropzone = Model
@@ -28,6 +29,7 @@ DropzoneView = Droppable View
   render: ->
     for d in @model.drops
       @el.appendChild d.el
+    @
 
   bindings:
     # Various state changes
@@ -53,17 +55,18 @@ DropzoneView = Droppable View
 
   template: -> '<div></div>'
 
-# Create some dropzones
+# Create some dropzones. Objects are used as initial state for declared models.
+# Rendering happens automatically.
 dropzone1 = DropzoneView
   drops: [
-    ImgView src: 'image1.jpg',
-    ImgView src: 'image2.jpg',
+    ImgView src: 'image1.jpg'
+    ImgView src: 'image2.jpg'
   ]
 dropzone2 = DropzoneView()
 
 # Render them
-document.body.appendChild dropzone1.render().el
-document.body.appendChild dropzone2.render().el
+document.body.appendChild dropzone1.el
+document.body.appendChild dropzone2.el
 
 # Programmatically move a drop
 drop = dropzone1.removeDrop()
