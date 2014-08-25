@@ -7,15 +7,11 @@ describe 'mvstar', ->
     mvstar.Model.should.exist
 
 describe 'mvstar#Model', ->
-  User = null
-  user = null
-
-  before ->
-    User = mvstar.Model
-      defaults:
-        age: 0
-      validators:
-        name: (name) -> name?
+  User = mvstar.Model
+    defaults:
+      age: 0
+    validators:
+      name: (name) -> name?
 
   it 'should set defaults for new instances', ->
     user = User name: 'Sam'
@@ -27,5 +23,10 @@ describe 'mvstar#Model', ->
     user = User name: 'Sam'
     user.validate().should.eq true
 
-# describe 'mvstar#View', ->
-#   it 'should render elements', ->
+describe 'mvstar#View', ->
+  View = mvstar.View
+    template: -> '<div>'
+
+  it 'should render templates', ->
+    view = View()
+    view.el.should.not.be.null
