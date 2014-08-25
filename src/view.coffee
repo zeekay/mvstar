@@ -16,7 +16,7 @@ prototype =
 
   cacheTemplate: (el) ->
     # Cache on prototype so it can be reused
-    @_cachedEl = el
+    @::_cachedEl = el
 
   renderTemplate: (ctx, cache=true) ->
     if @_cachedEl? and cache
