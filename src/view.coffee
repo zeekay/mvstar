@@ -16,9 +16,9 @@ prototype =
 
   cacheTemplate: (el) ->
     # Cache on prototype so it can be reused
-    @::_cachedEl = el
+    @_cachedEl = el
 
-  renderTemplate: (ctx) ->
+  renderTemplate: (ctx, cache=true) ->
     if @_cachedEl? and cache
       # Clone node, rather than re-rendering template for each instance.
       return @_cachedEl.cloneNode true
@@ -28,20 +28,21 @@ prototype =
 
     # Coerce strings to HTML dom fragments
     if typeof el is 'string' or el instanceof String
-      div = createElement 'div'
+      div = document.createElement 'div'
       div.insertAdjacentHTML 'afterbegin', el
-      el = div.removeChild childNodes[0]
+      el = div.removeChild div.childNodes[0]
 
     # Use el
     el
 
   render: (ctx, cache=true) ->
-    @el = @renderTemplate ctx
+    @el = @renderTemplate ctx, cache
     @cacheTemplate @el if cache
 
-    for prop, fn in @bindings
-      if (value = @model[prop]?)
-        fn.call @, value
+    if @bindings
+      for prop, fn in @bindings
+        if (value = @model[prop]?)
+          fn.call @, value
 
     @
 
