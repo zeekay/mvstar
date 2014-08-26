@@ -1,6 +1,4 @@
 observe = (object, bindings, bind) ->
-  bind ?= object
-
   Object.observe object, (changes) ->
     for change in changes
       {type, name, oldValue} = change
