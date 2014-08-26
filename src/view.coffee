@@ -36,6 +36,7 @@ prototype =
     el
 
   render: (ctx, cache=true) ->
+    throw new Error('eep')
     @el = @renderTemplate ctx, cache
     @cacheTemplate @el if cache
 
