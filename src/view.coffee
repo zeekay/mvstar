@@ -1,72 +1,201 @@
-observe = require './observe'
+# returns incremental ids
+nextId = do ->
+  counter = 0
+  (prefix) ->
+    id = ++counter + ''
+    prefix ? prefix + id
 
-prototype =
-  autoRender: true
+class View
+  el:         null
+  bindings:   {}
+  computed:   {}
+  events:     {}
+  formatters: {}
+  watching:   {}
 
-  initialize: (object) ->
-    if object.constructor.name == 'Object' and @model?
-      @model = new @model object
+  constructor: (opts = {}) ->
+    @el ?= opts.el
+
+    # You can get an element for the view multiple ways:
+    # 1. Pass it in as $el
+    # 2. Use a template to create a new element.
+    # 3. Find it in DOM using @el selector.
+    if opts.$el
+      @$el = opts.$el
     else
-      @model = object
+      if @template
+        @$el = $($(@template).html())
+      else
+        @$el = $(@el)
 
-    observe @model, @bindings, @
+    @id         = nextId @constructor.name
+    @state      = opts.state ? {}
+    @_events    = {}
+    @_targets = {}
+    @_watchers = {}
 
-    if @autoRender
-      @render object
+    # Generate list of watchers per name
+    for watcher, watched in @watching
+      unless Array.isArray watched
+        watched = [watched]
 
-  cacheTemplate: (el) ->
-    # Cache on prototype so it can be reused
-    (Object.getPrototypeOf @)._cachedEl = el
+      for name in watched
+        @_watchers[name] ?= []
+        @_watchers[name].push watcher
 
-  renderTemplate: (ctx, cache=true) ->
-    if @_cachedEl? and cache
-      # Clone node, rather than re-rendering template for each instance.
-      return @_cachedEl.cloneNode true
+    # find all elements in DOM.
+    @_cacheTargets()
 
-    # Generate element template
-    el = @template.call @, ctx
+    @render() unless not opts.autoRender
 
-    # Coerce strings to HTML dom fragments
-    if typeof el is 'string' or el instanceof String
-      div = document.createElement 'div'
-      div.insertAdjacentHTML 'afterbegin', el
-      el = div.removeChild div.childNodes[0]
+  # Find and cache binding targets.
+  _cacheTargets: ->
+    for name, targets of @bindings
+      unless Array.isArray targets
+        targets = [targets]
 
-    # Use el
-    el
+      # For each target cache based on selector
+      for target in targets
+        [selector, attr] = @_splitTarget target
 
-  render: (ctx, cache=true) ->
-    throw new Error('eep')
-    @el = @renderTemplate ctx, cache
-    @cacheTemplate @el if cache
+        unless @_targets[selector]?
+          @_targets[selector] = @$el.find selector
 
-    if @bindings
-      for prop, fn in @bindings
-        if (value = @model[prop]?)
-          fn.call @, value
+  _computeComputed: (name) ->
+    args = []
+    for sources in @watching[name]
+      unless Array.isArray sources
+        sources = [sources]
 
+      for src in sources
+        args.push @state[src]
+
+    value = @computed[name].apply @, args
+
+  _mutateDom: (selector, attr, value) ->
+    if attr == 'text'
+      @_targets[selector].text value
+    else
+      @_targets[selector].attr attr, value
+    return
+
+  # This translates a state change to it's intended target(s).
+  _renderBindings: (name, value) ->
+    # Check if this is a computed property
+    if @computed[name]?
+      value = @_computeComputed name
+
+    # Get list of targets for this binding name
+    targets = @bindings[name]
+    unless Array.isArray targets
+      targets = [targets]
+
+    # Update each target
+    for target in targets
+      [selector, attr] = @_splitTarget target
+
+      # Format value and mutate DOM
+      if (formatter = @formatters[name])?
+        _value = formatter value, "#{selector} @#{attr}"
+      else
+        _value = value
+
+      @_mutateDom selector, attr, _value
+
+    return
+
+  # Split event name / selector
+  _splitEvent: (e) ->
+    [event, selector...] = e.split /\s+/
+    selector = selector.join ' '
+
+    unless selector
+      $el = @$el
+      return [$el, event]
+
+    # allow global event binding
+    switch selector
+      when 'document'
+        $el = $(document)
+      when 'window'
+        $el = $(window)
+      else
+        $el = @$el.find selector
+
+    [$el, event]
+
+  # Split target selector + attr, if attr is none use text.
+  _splitTarget: (target) ->
+    if target.indexOf '@' != -1
+      [selector, attr] = target.split /\s+@/
+    else
+      [selector, attr] = [target, null]
+
+    unless attr?
+      attr = 'text'
+
+    [selector, attr]
+
+  # Get value from state for name.
+  get: (name) ->
+    @state[name]
+
+  # Set name to value.
+  set: (name, value) ->
+    @state[name] = value
+
+    # Render our binding
+    if @bindings[name]?
+      @_renderBindings name, value
+
+    # Force anything watching us to be recomputed
+    if (watchers = @_watchers[name])?
+      for watcher in watchers
+        @_renderBindings watcher
+
+  # Render current state according to bindings.
+  render: (state) ->
+    if state?
+      # update state
+      for k,v of state
+        @set k, v
+    else
+      for name, targets of @bindings
+        @_renderBindings name, @state[name]
     @
 
-  remove: ->
-    parent = @el.parentNode
-    parent.removeChild @el if parent
+  on: (e, callback) ->
+    [$el, event] = @_splitEvent e
+    if typeof callback is 'string'
+      callback = @[callback]
+    $el.on "#{event}.#{@id}", =>
+      callback.apply @, arguments
     @
 
-  template: ->
-    '<div></div>'
+  once: (e, callback) ->
+    [$el, event] = @_splitEvent e
+    if typeof callback is 'string'
+      callback = @[callback]
+    $el.one "#{event}.#{@id}", =>
+      callback.apply @, arguments
+    @
 
-module.exports =
-  View: (options) ->
-    View = (object = {}) ->
-      unless @ instanceof View
-        return new View object
+  off: (e) ->
+    [$el, event] = @_splitEvent e
+    $el.off "#{event}.#{@id}"
+    @
 
-      @initialize object
+  emit: (e, data...) ->
+    [$el, event] = @_splitEvent e
+    $el.trigger event, data
+    @
 
-    View:: = Object.create prototype
-    View::constructor = View
+  bind: ->
+    @on k,v for k,v of @events
+    @
 
-    for k,v of options
-      View::[k] = v
+  unbind: ->
+    @off k,v for k,v of @events
+    @
 
-    View
+module.exports = View
