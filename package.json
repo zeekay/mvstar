@@ -26,6 +26,9 @@
     "type": "git",
     "url": "http://github.com/zeekay/mvstar"
   },
+  "dependencies": {
+    "path-to-regexp": "~1.0.1"
+  },
   "devDependencies": {
     "chai": "^1.9.1",
     "coffee-script": "^1.8.0",
