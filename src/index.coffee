@@ -1,4 +1,5 @@
 module.exports =
   App:            require './app'
-  View:           require './view'
   EventEmitter:   require './event-emitter'
+  Route:          require './route'
+  View:           require './view'
