@@ -6,11 +6,6 @@ class App
     @_routes = {}
     @views   = []
 
-  # global setup
-  setup: ->
-    $.cookie.json = true
-    @
-
   addRoute: (path, cb) ->
     unless (route = @_routes[path])?
       route = new Route path
