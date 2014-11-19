@@ -1,6 +1,6 @@
 Route = require './route'
 
-class Application
+class App
   constructor: (state = {}) ->
     @state   = state
     @_routes = {}
@@ -51,4 +51,4 @@ class Application
   delete: (k) ->
     delete @state[k]
 
-module.exports = Application
+module.exports = App
