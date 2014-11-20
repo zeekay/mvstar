@@ -60,13 +60,9 @@ class LineItemView extends View
       cart.remove(@state.sku)
       @destroy()
 
-  updateQuantity: (e) ->
-    el = $(e.currentTarget)
-    e.preventDefault()
-    e.stopPropagation()
-
+  updateQuantity: (event, el) ->
     # Get quantity
-    quantity = parseInt(el.val(), 10)
+    quantity = parseInt($(el).val(), 10)
 
     # Prevent less than one quantity
     if quantity < 1 || isNaN quantity

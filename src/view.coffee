@@ -164,38 +164,38 @@ class View
         @_renderBindings name, @state[name]
     @
 
-  on: (e, callback) ->
-    [$el, event] = @_splitEvent e
+  # Bind an event to a callback
+  bindEvent: (selector, callback) ->
+    [$el, eventName] = @_splitEvent selector
+
     if typeof callback is 'string'
       callback = @[callback]
-    $el.on "#{event}.#{@id}", =>
-      callback.apply @, arguments
+
+    $el.on "#{eventName}.#{@id}", (event) =>
+      callback.call @, event, event.currentTarget
     @
 
-  once: (e, callback) ->
-    [$el, event] = @_splitEvent e
-    if typeof callback is 'string'
-      callback = @[callback]
-    $el.one "#{event}.#{@id}", =>
-      callback.apply @, arguments
+  # Unbind callbacks from an event
+  unbindEvent: (selector) ->
+    [$el, eventName] = @_splitEvent selector
+    $el.off "#{eventName}.#{@id}"
     @
 
-  off: (e) ->
-    [$el, event] = @_splitEvent e
-    $el.off "#{event}.#{@id}"
-    @
-
-  emit: (e, data...) ->
-    [$el, event] = @_splitEvent e
-    $el.trigger event, data
-    @
-
+  # Bind all events
   bind: ->
-    @on k,v for k,v of @events
+    for selector, callback of @events
+      @bindEvent selector, callback
     @
 
+
+  # Unbind all events
   unbind: ->
-    @off k,v for k,v of @events
+    for selector, callback of @events
+      @unbindEvent selector, callback
     @
+
+  # Remove this element from it's parent
+  remove: ->
+    @$el.remove()
 
 module.exports = View
