@@ -75,6 +75,7 @@ class Cart extends EventEmitter
   get: (sku) ->
     @cart[sku]
 
+  # You must manually emit things you care about.
   add: (item) ->
     @emit 'add', item
 
