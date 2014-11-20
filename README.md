@@ -2,7 +2,7 @@
 MV* framework. No fancy virtual DOM. Minimal bits needed for sensible
 client-side applications. Declarative one-way databinding. Event emitters.
 Simple routing. Computed properties. Completely explicit. No dependencies
-outside of a [dollar](jquery.org) [library](zeptojs.com).
+outside of a [dollar](http://jquery.org) [library](http://zeptojs.com).
 
 ## Views
 Views encapsulate bits of DOM. Generally like Backbone views but with
@@ -59,4 +59,42 @@ class LineItem extends View
     @set 'quantity', quantity
 
     false
+```
+
+## Events
+Extend from `mvstar.EventEmitter` and wire up things with events.
+
+```coffeescript
+class Cart extends EventEmitter
+  constructor: (@cart) ->
+    super
+    @cart    ?= {}
+    @subtotal = 0
+    @quantity = 0
+
+  get: (sku) ->
+    @cart[sku]
+
+  add: (item) ->
+    @emit 'add', item
+
+    @quantity += item.quantity
+    @subtotal += item.quantity * item.price
+
+    if (@get item.sku)?
+      @cart[item.sku].quantity += item.quantity
+    else
+      @cart[item.sku] = item
+
+    @
+
+  remove: (sku) ->
+    @emit 'remove', @cart[sku]
+    delete @cart[sku]
+    @
+
+  clear: ->
+    @emit 'clear'
+    @cart = {}
+    @
 ```
