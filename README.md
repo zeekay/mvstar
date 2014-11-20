@@ -43,7 +43,7 @@ class LineItem extends View
   # Bind to events.
   events:
     'change .quantity input': 'updateQuantity'
-    'click .remove-item': 'removeItem'
+    'click .remove-item':     'removeItem'
 
   # You need to manually unbind events if you define any.
   removeItem: ->
