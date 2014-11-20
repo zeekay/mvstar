@@ -1,5 +1,5 @@
 # mvstar
-MV* framework. No fancy virtual DOM. Minimal bits needed for sensible
+MV★ framework. No fancy virtual DOM. Minimal bits needed for sensible
 client-side applications. Declarative one-way databinding. Event emitters.
 Simple routing. Computed properties. Completely explicit. No dependencies
 outside of a [dollar](http://jquery.org) [library](http://zeptojs.com).
