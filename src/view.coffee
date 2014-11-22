@@ -1,10 +1,4 @@
 # returns incremental ids
-nextId = do ->
-  counter = 0
-  (prefix) ->
-    id = ++counter + ''
-    prefix ? prefix + id
-
 class View
   el:         null
   bindings:   {}
@@ -12,6 +6,8 @@ class View
   events:     {}
   formatters: {}
   watching:   {}
+
+  mutators: require './mutators'
 
   constructor: (opts = {}) ->
     @el ?= opts.el
@@ -31,7 +27,7 @@ class View
     # replace @el with $@el for convenience.
     @el = @$el
 
-    @id         = nextId @constructor.name
+    @id         = @_nextId @constructor.name
     @state      = opts.state ? {}
     @_events    = {}
     @_targets = {}
@@ -50,6 +46,13 @@ class View
     @_cacheTargets()
 
     @render() unless not opts.autoRender
+
+  # Get incrementally increasing ids.
+  _nextId: do ->
+    counter = 0
+    (prefix) ->
+      id = ++counter + ''
+      prefix ? prefix + id
 
   # Find and cache binding targets.
   _cacheTargets: ->
@@ -78,12 +81,11 @@ class View
   _mutateDom: (selector, attr, value) ->
     switch attr
       when 'text'
-        @_targets[selector].text value
+        @mutators.text @_targets[selector], attr, value
       when 'class'
-        @_targets[selector].removeClass()
-        @_targets[selector].addClass value
+        @mutators.class @_targets[selector], attr, value
       else
-        @_targets[selector].attr attr, value
+        @mutators.attr @_targets[selector], attr, value
     return
 
   # This translates a state change to it's intended target(s).
