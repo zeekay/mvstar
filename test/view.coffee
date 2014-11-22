@@ -1,10 +1,16 @@
-mvstar = require '../lib'
-should = require('chai').should()
+mvstar = null
+view = null
 
 describe 'mvstar#View', ->
-  View = mvstar.View
-    template: -> '<div>'
+  before ->
+    (require 'jsdom').jsdom()
+    global.$ = require 'jquery'
+    mvstar = require '../lib'
+
+    class View extends mvstar.View
+      html: '<div></div>'
+
+    view = new View()
 
   it 'should render templates', ->
-    view = View()
     view.el.should.not.be.null

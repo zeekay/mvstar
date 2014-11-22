@@ -1,4 +1,3 @@
-# returns incremental ids
 class View
   el:         null
   bindings:   {}
@@ -11,21 +10,6 @@ class View
 
   constructor: (opts = {}) ->
     @el ?= opts.el
-
-    # You can get an element for the view multiple ways:
-    # 1. Pass it in as $el
-    # 2. Use a template to create a new element.
-    # 3. Find it in DOM using @el selector.
-    if opts.$el
-      @$el = opts.$el
-    else
-      if @template
-        @$el = $($(@template).html())
-      else
-        @$el = $(@el)
-
-    # replace @el with $@el for convenience.
-    @el = @$el
 
     @id         = @_nextId @constructor.name
     @state      = opts.state ? {}
@@ -42,10 +26,30 @@ class View
         @_watchers[name] ?= []
         @_watchers[name].push watcher
 
+    # Get or create element based on template/opts
+    @el = @$el = @_getEl opts
+
     # find all elements in DOM.
     @_cacheTargets()
 
-    @render() unless not opts.autoRender
+  # Set element for this view instance
+  _getEl: (opts) ->
+    # You can get an element for the view multiple ways:
+    # 1. Pass it in as $el
+    # 2. Use a template to create a new element.
+    # 3. Find it in DOM using @el selector.
+
+    # Use opts.$el if provided
+    return opts.$el if opts.$el
+
+    # Generate template selector to create DOM
+    return $($(@template).html()) if @template
+
+    # Use string template
+    return $(@html) if @html
+
+    # Use selector defined in class
+    return $(@el)
 
   # Get incrementally increasing ids.
   _nextId: do ->
