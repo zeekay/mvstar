@@ -96,7 +96,7 @@ class View
 
       # Format value and mutate DOM
       if (formatter = @formatters[name])?
-        _value = formatter value, "#{selector} @#{attr}"
+        _value = formatter.call @, value, "#{selector} @#{attr}"
       else
         _value = value
 
