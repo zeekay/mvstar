@@ -1,19 +1,50 @@
 class EventEmitter
-  constructor: ->
-    @_dollar = $(@)
+  _listeners:    {}
+  _allListeners: []
+  debug:         false
 
-  emit: (event, data...) ->
-    @_dollar.trigger event, data
+  addListener: (event, callback) ->
+    if event
+      @_listeners[event] ?= []
+      @_listeners[event].push callback
+      # return the index of the newly added handler
+      @_listeners[event].length - 1
+    else
+      @_allListeners.push callback
+      @_allListeners.length - 1
 
-  once: (event, callback) ->
-    @_dollar.one event, (event, data...) =>
-      callback.apply @, data
+  removeListener: (event, index) ->
+    unless event
+      return @removeAllListeners()
 
-  on: (event, callback) ->
-    @_dollar.bind event, (event, data...) =>
-      callback.apply @, data
+    if index?
+      @_listeners[event][index] = null
+    else
+      @_listeners[event] = {}
+    return
 
-  off: (event, callback) ->
-    @_dollar.unbind event, callback
+  removeAllListeners: ->
+    @_listeners = {}
+    return
+
+  on: ->
+    @addListener.apply @, arguments
+
+  off: ->
+    @removeListener.apply @, arguments
+
+  emit: (event, args...) ->
+    listeners = @_listeners[event] or []
+    for listener in listeners
+      if listener?
+        handler.apply @, args
+
+    args.unshift event
+
+    for listener in @_allListeners
+      listener.apply @, args
+
+    if @debug
+      console.log.apply console, args
 
 module.exports = EventEmitter
