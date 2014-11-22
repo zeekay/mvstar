@@ -19,7 +19,7 @@
   "main": "lib/",
   "bin": "bin/mvstar",
   "scripts": {
-    "prepublish": "cake build",
+    "prepublish": "cake prepublish",
     "test": "cake test"
   },
   "repository": {
