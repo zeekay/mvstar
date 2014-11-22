@@ -28,6 +28,9 @@ class View
       else
         @$el = $(@el)
 
+    # replace @el with $@el for convenience.
+    @el = @$el
+
     @id         = nextId @constructor.name
     @state      = opts.state ? {}
     @_events    = {}
