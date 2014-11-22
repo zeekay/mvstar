@@ -14,6 +14,10 @@ task 'build', 'build project', (options) ->
   exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
   exec 'node_modules/.bin/coffee -bcm -o .test/ test/'
 
+task 'prepublish', 'build project', (options) ->
+  exec 'node_modules/.bin/coffee -bc -o lib/ src/'
+  exec 'node_modules/.bin/coffee -bc -o .test/ test/'
+
 task 'test', 'run tests', (options) ->
   test = options.test ? '.test'
   if options.grep?
