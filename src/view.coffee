@@ -73,10 +73,14 @@ class View
     value = @computed[name].apply @, args
 
   _mutateDom: (selector, attr, value) ->
-    if attr == 'text'
-      @_targets[selector].text value
-    else
-      @_targets[selector].attr attr, value
+    switch attr
+      when 'text'
+        @_targets[selector].text value
+      when 'class'
+        @_targets[selector].removeClass()
+        @_targets[selector].addClass value
+      else
+        @_targets[selector].attr attr, value
     return
 
   # This translates a state change to it's intended target(s).
