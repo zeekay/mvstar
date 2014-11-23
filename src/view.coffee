@@ -9,12 +9,11 @@ class View
   mutators: require './mutators'
 
   constructor: (opts = {}) ->
-    @el ?= opts.el
-
-    @id         = @_nextId @constructor.name
-    @state      = opts.state ? {}
-    @_events    = {}
-    @_targets = {}
+    @el       ?= opts.el
+    @id        = @_nextId @constructor.name
+    @state     = opts.state ? {}
+    @_events   = {}
+    @_targets  = {}
     @_watchers = {}
 
     # Generate list of watchers per name

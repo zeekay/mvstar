@@ -1,7 +1,8 @@
 class EventEmitter
-  _listeners:    {}
-  _allListeners: []
-  debug:         false
+  constructor: (opts) ->
+    @debug         = opts.debug ? false
+    @_listeners    = {}
+    @_allListeners = []
 
   addListener: (event, callback) ->
     if event
