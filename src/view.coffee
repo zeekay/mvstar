@@ -84,6 +84,8 @@ class View
 
   _mutateDom: (selector, attr, value) ->
     switch attr
+      when 'value'
+        @mutators.value @_targets[selector], attr, value
       when 'text'
         @mutators.text @_targets[selector], attr, value
       when 'class'
