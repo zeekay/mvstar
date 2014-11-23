@@ -3,7 +3,7 @@ class Model
   validators: {}
   transforms: {}
 
-  constructor: (state) ->
+  constructor: (state = {}) ->
     @state = {}
 
     @setDefaults()
