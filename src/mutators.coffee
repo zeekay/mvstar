@@ -19,3 +19,7 @@ module.exports =
   # Update any `attr` of element to `value`
   attr: ($el, attr, value) ->
     $el.attr attr, value
+
+  # Update value `attr` but also correctly handles selects.
+  value: ($el, attr, value) ->
+    $el.val value

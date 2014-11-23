@@ -45,17 +45,33 @@ describe 'View', ->
 
   describe '#bindings', ->
     html = null
+    view = null
 
     before ->
       class View extends mvstar.View
         html: '''
               <div>
                 <span id="text"></span>
+
                 <span class="text"></span>
+
                 <span class="formatted"></span>
+
                 <img id="img">
+
                 <span id="computed"></span>
+
                 <span class="foo bar"></span>
+
+                <select class="select-value-test">
+                  <option value="a">a</option>
+                  <option value="b">b</option>
+                </select>
+
+                <input name="butt" class="input-value-test">
+
+                <textarea class="textarea-text-test"></textarea>
+                <textarea class="textarea-value-test"></textarea>
               </div>
               '''
 
@@ -66,6 +82,10 @@ describe 'View', ->
           src:         'img#img @src'
           ab:          'span#computed'
           classTarget: 'span.foo.bar @class'
+          select:      '.select-value-test @value'
+          input:       '.input-value-test @value'
+          textarea:    'textarea.textarea-value-test @value'
+          textarea2:   'textarea.textarea-text-test'
 
         computed:
           ab: (a, b) -> [a, b]
@@ -87,6 +107,7 @@ describe 'View', ->
               'qux'
 
       view = new View()
+
       view.set 'textId', 'foo'
       view.set 'textClass', 'bar'
       view.set 'textFmted', 'fmt'
@@ -94,8 +115,15 @@ describe 'View', ->
       view.set 'b', 'b'
       view.set 'src', 'www.baz.com'
       view.set 'classTarget', 1
+      view.set 'select',    'a'
+      view.set 'input',     'value'
+      view.set 'textarea',  'textarea'
+      view.set 'textarea2', 'textarea2'
+
       view.render()
+
       html = view.el.html()
+      html
 
     it 'should be render text bindings correctly', ->
       html.should.contain '<span id="text">foo</span>'
@@ -112,3 +140,13 @@ describe 'View', ->
 
     it 'should be render class attributes correctly', ->
       html.should.contain '<span class="foo bar qux"></span>'
+
+    it 'should render textareas correctly', ->
+      html.should.contain '<textarea class="textarea-text-test">textarea2</textarea>'
+      html.should.contain '<textarea class="textarea-value-test">textarea</textarea>'
+
+    it 'should render inputs correctly', ->
+      view.el.find('.input-value-test').val().should.eq 'value'
+
+    it 'should render selects correctly', ->
+      view.el.find('.select-value-test').val().should.eq 'a'
