@@ -29,7 +29,7 @@ class Model
       validators = [validators]
 
     for validator in validators
-      unless validator.call @, prop, value
+      unless validator.call @, value, prop
         return false
     true
 
@@ -49,16 +49,25 @@ class Model
 
     if value?
       for transform in transforms
-        value = transform.call @, prop, value
+        value = transform.call @, value, prop
       value
     else
       for transform in transforms
-        @state[prop] = transform.call @, prop, value
+        @state[prop] = transform.call @, value, prop
       @state[prop]
 
   transformAll: ->
     for prop of @transforms
       @transform prop
     @
+
+  get: (prop) ->
+    @state[prop]
+
+  set: (prop, value) ->
+    unless @validate prop, value
+      return false
+
+    @state[prop] = @transform prop, value
 
 module.exports = Model
