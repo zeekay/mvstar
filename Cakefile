@@ -37,6 +37,7 @@ task 'test', 'run tests', (options) ->
         --timeout 5000
         --compilers coffee:coffee-script/register
         --require postmortem/register
+        --require test/_helper
         #{grep}
         #{test}"
 
