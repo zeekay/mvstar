@@ -51,13 +51,23 @@ class Model
       @transform prop
     @
 
+  # Get property
   get: (prop) ->
     @state[prop]
 
+  # Set property to `value`
   set: (prop, value) ->
     unless @validate prop, value
       return false
-
     @state[prop] = @transform prop, value
+    return true
+
+  # Update several properties at once
+  update: (state) ->
+    ret = true
+    for prop, value of state
+      unless @set prop, value
+        ret = false
+    return ret
 
 module.exports = Model
