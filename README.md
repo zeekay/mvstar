@@ -1,4 +1,4 @@
-# mvstar
+# mvstar [![Build Status](https://travis-ci.org/zeekay/mvstar.svg?branch=master)](https://travis-ci.org/zeekay/mvstar)
 MV★ framework. No fancy virtual DOM. Minimal bits needed for sensible
 client-side applications. Declarative one-way databinding. Event emitters.
 Simple routing. Computed properties. Completely explicit. No dependencies
