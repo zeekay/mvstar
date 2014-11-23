@@ -22,7 +22,7 @@ describe 'Model', ->
   describe '#defaults', ->
     it 'should set defaults for new instances', ->
       user = new User name: 'Sam'
-      user.age.should.eq 0
+      user.get('age').should.eq 0
 
 
   describe '#validators', ->
