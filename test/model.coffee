@@ -19,13 +19,16 @@ describe 'Model', ->
       User = User
       done()
 
-  it 'should set defaults for new instances', ->
-    user = new User name: 'Sam'
-    user.age.should.eq 0
+  describe '#defaults', ->
+    it 'should set defaults for new instances', ->
+      user = new User name: 'Sam'
+      user.age.should.eq 0
 
-  it 'should validate instances', ->
-    user = new User()
-    user.validate().should.eq false
 
-    user = new User name: 'Sam'
-    user.validate().should.eq true
+  describe '#validators', ->
+    it 'should validate instances', ->
+      user = new User()
+      user.validate().should.eq false
+
+      user = new User name: 'Sam'
+      user.validate().should.eq true
