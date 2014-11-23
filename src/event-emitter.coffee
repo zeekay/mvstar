@@ -7,7 +7,7 @@ class EventEmitter
     if event
       @_listeners[event] ?= []
       @_listeners[event].push callback
-      # return the index of the newly added handler
+      # return the index of the newly added listener
       @_listeners[event].length - 1
     else
       @_allListeners.push callback
@@ -37,7 +37,7 @@ class EventEmitter
     listeners = @_listeners[event] or []
     for listener in listeners
       if listener?
-        handler.apply @, args
+        listener.apply @, args
 
     args.unshift event
 
