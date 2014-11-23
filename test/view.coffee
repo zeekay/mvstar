@@ -51,102 +51,119 @@ describe 'View', ->
       class View extends mvstar.View
         html: '''
               <div>
-                <span id="text"></span>
-
-                <span class="text"></span>
-
-                <span class="formatted"></span>
-
-                <img id="img">
-
+                <span class="class"></span>
+                <span id="id"></span>
+                <span id="formatted"></span>
                 <span id="computed"></span>
+                <span id="class-attr" class="foo bar"></span>
 
-                <span class="foo bar"></span>
+                <div id="data"></div>
 
-                <select class="select-value-test">
-                  <option value="a">a</option>
-                  <option value="b">b</option>
+                <img id="src">
+
+                <input id="input-checked" type="checkbox">
+                <input id="input-name">
+                <input id="input-value">
+
+                <select id="select-index">
+                  <option value="optionA">optionA</option>
+                  <option value="optionB">optionB</option>
                 </select>
 
-                <input name="butt" class="input-value-test">
+                <select id="select-value">
+                  <option value="optionA">optionA</option>
+                  <option value="optionB">optionB</option>
+                </select>
 
-                <textarea class="textarea-text-test"></textarea>
-                <textarea class="textarea-value-test"></textarea>
+                <textarea id="textarea-text"></textarea>
+                <textarea id="textarea-value"></textarea>
               </div>
               '''
 
         bindings:
-          textId:      'span#text'
-          textClass:   'span.text'
-          textFmted:   'span.formatted'
-          src:         'img#img @src'
-          ab:          'span#computed'
-          classTarget: 'span.foo.bar @class'
-          select:      '.select-value-test @value'
-          input:       '.input-value-test @value'
-          textarea:    'textarea.textarea-value-test @value'
-          textarea2:   'textarea.textarea-text-test'
+          class:         '.class'
+          id:            '#id'
+          formatted:     '#formatted'
+          computed:      '#computed'
+          classAttr:     '#class-attr @class'
+
+          data:          '#data @data-foo'
+
+          src:           '#src @src'
+
+          inputChecked:  '#input-checked @checked'
+          inputName:     '#input-name    @name'
+          inputValue:    '#input-value   @value'
+
+          selectIndex:   '#select-index @index'
+          selectValue:   '#select-value @value'
+
+          textareaText:  '#textarea-text'
+          textareaValue: '#textarea-value @value'
 
         computed:
-          ab: (a, b) -> [a, b]
+          computed: (a, b) -> [a, b]
 
         watching:
-          ab: ['a', 'b']
+          computed: ['computedA', 'computedB']
 
         formatters:
-          textFmted: (v) ->
-            'textFmted=' + v
+          formatted: (v) ->
+            'formatted=' + v
 
-          ab: (v) ->
+          computed: (v) ->
             v.join ','
-
-          classTarget: (v) ->
-            if v > 1
-              'baz'
-            else
-              'qux'
 
       view = new View()
 
-      view.set 'textId', 'foo'
-      view.set 'textClass', 'bar'
-      view.set 'textFmted', 'fmt'
-      view.set 'a', 'a'
-      view.set 'b', 'b'
-      view.set 'src', 'www.baz.com'
-      view.set 'classTarget', 1
-      view.set 'select',    'a'
-      view.set 'input',     'value'
-      view.set 'textarea',  'textarea'
-      view.set 'textarea2', 'textarea2'
+      view.set 'class',         'value'
+      view.set 'id',            'value'
+      view.set 'formatted',     'value'
+      view.set 'computedA',     'valueA'
+      view.set 'computedB',     'valueB'
+      view.set 'classAttr',     'value'
+      view.set 'data',          'value'
+      view.set 'src',           'www.value.com'
+      view.set 'inputChecked',  true
+      view.set 'inputName',     'value'
+      view.set 'inputValue',    'value'
+      view.set 'selectIndex',   1
+      view.set 'selectValue',   'optionA'
+      view.set 'textareaText',  'value'
+      view.set 'textareaValue', 'value'
 
       view.render()
 
       html = view.el.html()
       html
 
-    it 'should be render text bindings correctly', ->
-      html.should.contain '<span id="text">foo</span>'
-      html.should.contain '<span class="text">bar</span>'
+    it 'should bind using class as selector', ->
+      html.should.contain '<span class="class">value</span>'
 
-    it 'should be render @src bindings correctly', ->
-      html.should.contain '<img id="img" src="www.baz.com">'
+    it 'should bind using id as selector', ->
+      html.should.contain '<span id="id">value</span>'
 
-    it 'should be render formatted values correctly', ->
-      html.should.contain '<span class="formatted">textFmted=fmt</span>'
+    it 'should bind formatted value to target', ->
+      html.should.contain '<span id="formatted">formatted=value</span>'
 
-    it 'should be render computed properties correctly', ->
-      html.should.contain '<span id="computed">a,b</span>'
+    it 'should bind computed value to target', ->
+      html.should.contain '<span id="computed">valueA,valueB</span>'
 
-    it 'should be render class attributes correctly', ->
-      html.should.contain '<span class="foo bar qux"></span>'
+    it 'should bind to target\'s class attribute', ->
+      html.should.contain '<span id="class-attr" class="foo bar value"></span>'
+
+    it 'should bind to target\'s data attribute', ->
+      html.should.contain '<div id="data" data-foo="value"></div>'
+
+    it 'should bind to target\'s src attribute', ->
+      html.should.contain '<img id="src" src="www.value.com">'
+
+    it 'should set input\'s value correctly', ->
+      view.el.find('#input-value').val().should.eq 'value'
+
+    it 'should set select\'s value correctly', ->
+      view.el.find('#select-value').val().should.eq 'optionA'
 
     it 'should render textareas correctly', ->
-      html.should.contain '<textarea class="textarea-text-test">textarea2</textarea>'
-      html.should.contain '<textarea class="textarea-value-test">textarea</textarea>'
-
-    it 'should render inputs correctly', ->
-      view.el.find('.input-value-test').val().should.eq 'value'
-
-    it 'should render selects correctly', ->
-      view.el.find('.select-value-test').val().should.eq 'a'
+      html.should.contain '<textarea id="textarea-text">value</textarea>'
+      html.should.contain '<textarea id="textarea-value">value</textarea>'
