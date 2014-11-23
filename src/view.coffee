@@ -83,15 +83,9 @@ class View
     value = @computed[name].apply @, args
 
   _mutateDom: (selector, attr, value) ->
-    switch attr
-      when 'value'
-        @mutators.value @_targets[selector], attr, value
-      when 'text'
-        @mutators.text @_targets[selector], attr, value
-      when 'class'
-        @mutators.class @_targets[selector], attr, value
-      else
-        @mutators.attr @_targets[selector], attr, value
+    # use attr-specific mutator, fall back to attr mutator
+    mutator = @mutators[attr] ? @mutators.attr
+    mutator @_targets[selector], attr, value
     return
 
   # This translates a state change to it's intended target(s).
