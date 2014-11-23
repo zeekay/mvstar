@@ -82,6 +82,10 @@ task 'gh-pages', 'Publish docs to gh-pages', ->
   brief = require 'brief'
   brief.update()
 
+task 'dist', 'Make distributable bundles', ->
+  exec 'node_modules/.bin/requisite src/index.coffee -o mvstar.js'
+  exec 'node_modules/.bin/requisite src/index.coffee -o mvstar.min.js -m'
+
 task 'publish', 'publish project', (options) ->
   newVersion = options.version ? 'patch'
 
