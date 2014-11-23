@@ -1,5 +1,5 @@
 class EventEmitter
-  constructor: (opts) ->
+  constructor: (opts = {}) ->
     @debug         = opts.debug ? false
     @_listeners    = {}
     @_allListeners = []
