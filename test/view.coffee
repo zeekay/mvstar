@@ -2,7 +2,7 @@ mvstar = require '../lib'
 
 describe 'View', ->
   describe 'View#render (template)', ->
-    view = null
+    html = null
 
     before (done) ->
       (require 'jsdom').env '''
@@ -17,65 +17,98 @@ describe 'View', ->
           template: '#html-template'
 
         view = new View()
+        view.render()
+        html = view.el.html()
         done()
 
     it 'should use template in DOM', ->
-      view.render()
-      view.el.html().should.not.be.null
-      view.el.html().should.equal 'Title'
+      html.should.not.be.null
+      html.should.equal 'Title'
 
   describe 'View#render (string)', ->
-    view = null
+    html = null
 
-    before (done) ->
-      (require 'jsdom').env '', (err, window) ->
-        throw err if err?
-        global.$ = (require 'jquery') window
+    before ->
+      class View extends mvstar.View
+        html: '''
+              <h1>Title</h1>
+              '''
 
-        class View extends mvstar.View
-          html: '''
-                <h1>Title</h1>
-                '''
-
-        view = new View()
-        done()
+      view = new View()
+      view.render()
+      html = view.el.html()
 
     it 'should render string template', ->
-      view.render()
 
-      view.el.html().should.not.be.null
-      view.el.html().should.equal 'Title'
+      html.should.not.be.null
+      html.should.equal 'Title'
 
   describe 'View#bindings', ->
-    view = null
+    html = null
 
-    before (done) ->
-      (require 'jsdom').env '', (err, window) ->
-        throw err if err?
-        global.$ = (require 'jquery') window
+    before ->
+      class View extends mvstar.View
+        html: '''
+              <div>
+                <span id="text"></span>
+                <span class="text"></span>
+                <span class="formatted"></span>
+                <img id="img">
+                <span id="computed"></span>
+                <span class="foo bar"></span>
+              </div>
+              '''
 
-        class View extends mvstar.View
-          html: '''
-                <div>
-                  <span id="text"></span>
-                  <span class="text"></span>
-                  <img id="img">
-                </div>
-                '''
+        bindings:
+          textId:      'span#text'
+          textClass:   'span.text'
+          textFmted:   'span.formatted'
+          src:         'img#img @src'
+          ab:          'span#computed'
+          classTarget: 'span.foo.bar @class'
 
-          bindings:
-            textId:    'span#text'
-            textClass: 'span.text'
-            src:       'img#img @src'
+        computed:
+          ab: (a, b) -> [a, b]
 
-        view = new View()
-        done()
+        watching:
+          ab: ['a', 'b']
 
-    it 'should be used to update DOM declaratively', ->
-      view.render()
+        formatters:
+          textFmted: (v) ->
+            'textFmted=' + v
+
+          ab: (v) ->
+            v.join ','
+
+          classTarget: (v) ->
+            if v > 1
+              'baz'
+            else
+              'qux'
+
+      view = new View()
       view.set 'textId', 'foo'
       view.set 'textClass', 'bar'
+      view.set 'textFmted', 'fmt'
+      view.set 'a', 'a'
+      view.set 'b', 'b'
       view.set 'src', 'www.baz.com'
-      view.el.html().should.contain '<span id="text">foo</span>'
-      view.el.html().should.contain '<span class="text">bar</span>'
-      view.el.html().should.contain '<img id="img" src="www.baz.com">'
+      view.set 'classTarget', 1
+      view.render()
+      html = view.el.html()
+
+    it 'should be render text bindings correctly', ->
+      html.should.contain '<span id="text">foo</span>'
+      html.should.contain '<span class="text">bar</span>'
+
+    it 'should be render @src bindings correctly', ->
+      html.should.contain '<img id="img" src="www.baz.com">'
+
+    it 'should be render formatted values correctly', ->
+      html.should.contain '<span class="formatted">textFmted=fmt</span>'
+
+    it 'should be render computed properties correctly', ->
+      html.should.contain '<span id="computed">a,b</span>'
+
+    it 'should be render class attributes correctly', ->
+      html.should.contain '<span class="foo bar qux"></span>'
