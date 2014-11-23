@@ -1,7 +1,7 @@
 mvstar = require '../lib'
 
 describe 'View', ->
-  describe 'View#render (template)', ->
+  describe '#render (template)', ->
     html = null
 
     before (done) ->
@@ -25,7 +25,7 @@ describe 'View', ->
       html.should.not.be.null
       html.should.equal 'Title'
 
-  describe 'View#render (string)', ->
+  describe '#render (string)', ->
     html = null
 
     before ->
@@ -43,7 +43,7 @@ describe 'View', ->
       html.should.not.be.null
       html.should.equal 'Title'
 
-  describe 'View#bindings', ->
+  describe '#bindings', ->
     html = null
 
     before ->
