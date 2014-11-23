@@ -24,13 +24,9 @@ class Model
 
     value ?= @state[prop]
 
-    validators = @validators[prop]
-    unless Array.isArray validators
-      validators = [validators]
-
-    for validator in validators
-      unless validator.call @, value, prop
-        return false
+    validator = @validators[prop]
+    unless validator.call @, value, prop
+      return false
     true
 
   validateAll: ->
@@ -43,18 +39,12 @@ class Model
     unless prop?
       return @transformAll()
 
-    transforms = @transforms[prop]
-    unless Array.isArray transforms
-      transforms = [transforms]
+    tranform = @transforms[prop]
 
     if value?
-      for transform in transforms
-        value = transform.call @, value, prop
-      value
+      transform.call @, value, prop
     else
-      for transform in transforms
-        @state[prop] = transform.call @, value, prop
-      @state[prop]
+      @state[prop] = transform.call @, @state[prop], prop
 
   transformAll: ->
     for prop of @transforms
