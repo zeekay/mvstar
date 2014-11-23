@@ -35,9 +35,10 @@ class View
   # Set element for this view instance
   _getEl: (opts) ->
     # You can get an element for the view multiple ways:
-    # 1. Pass it in as $el
-    # 2. Use a template to create a new element.
-    # 3. Find it in DOM using @el selector.
+    # 1. Use `opts.template` to create a new element.
+    # 2. Use `opts.html` to create a new element.
+    # 3. Pass it in as `opts.$el`
+    # 4. Find it in DOM using @el selector.
 
     # Use opts.$el if provided
     return opts.$el if opts.$el

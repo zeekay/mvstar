@@ -1,7 +1,7 @@
 mvstar = require '../lib'
 should = require('chai').should()
 
-describe 'mvstar#Model', ->
+describe 'Model', ->
   User = null
 
   before (done) ->
