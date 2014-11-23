@@ -1,16 +1,24 @@
-mvstar = null
-view = null
+mvstar = require '../lib'
 
 describe 'mvstar#View', ->
-  before ->
-    (require 'jsdom').jsdom()
-    global.$ = require 'jquery'
-    mvstar = require '../lib'
+  view = null
 
-    class View extends mvstar.View
-      html: '<div></div>'
+  before (done) ->
+    (require 'jsdom').env '', (err, window) ->
+      throw err if err?
 
-    view = new View()
+      global.$ = (require 'jquery') window
+
+      class View extends mvstar.View
+        html: '''
+              <h1>Title</h1>
+              '''
+
+      view = new View()
+      done()
 
   it 'should render templates', ->
-    view.el.should.not.be.null
+    view.render()
+
+    view.el.html().should.not.be.null
+    view.el.html().should.equal 'Title'
