@@ -158,12 +158,23 @@ describe 'View', ->
     it 'should bind to target\'s src attribute', ->
       html.should.contain '<img id="src" src="www.value.com">'
 
+    it 'should set input as checked correctly', ->
+      view.el.find('#input-checked').prop('checked').should.eq true
+
+    it 'should set input\'s name attribute correctly', ->
+      view.el.find('#input-name').attr('name').should.eq 'value'
+
     it 'should set input\'s value correctly', ->
       view.el.find('#input-value').val().should.eq 'value'
 
     it 'should set select\'s value correctly', ->
       view.el.find('#select-value').val().should.eq 'optionA'
 
-    it 'should render textareas correctly', ->
+    it 'should set selectIndex correctly', ->
+      view.el.find('#select-index').prop('selectedIndex').should.eq 1
+
+    it 'should set textarea text attribute correctly', ->
       html.should.contain '<textarea id="textarea-text">value</textarea>'
+
+    it 'should set textarea\'s value correctly', ->
       html.should.contain '<textarea id="textarea-value">value</textarea>'
