@@ -4,7 +4,7 @@ class EventEmitter
     @_listeners    = {}
     @_allListeners = []
 
-  addListener: (event, callback) ->
+  on: (event, callback) ->
     if event
       @_listeners[event] ?= []
       @_listeners[event].push callback
@@ -14,25 +14,17 @@ class EventEmitter
       @_allListeners.push callback
       @_allListeners.length - 1
 
-  removeListener: (event, index) ->
-    unless event
-      return @removeAllListeners()
+  off: (event, index) ->
+    # remove all if no event is specified
+    return @_listeners = {} unless event
 
     if index?
+      # Remove listener at index
       @_listeners[event][index] = null
     else
+      # Remove all listeners for event
       @_listeners[event] = {}
     return
-
-  removeAllListeners: ->
-    @_listeners = {}
-    return
-
-  on: ->
-    @addListener.apply @, arguments
-
-  off: ->
-    @removeListener.apply @, arguments
 
   emit: (event, args...) ->
     listeners = @_listeners[event] or []

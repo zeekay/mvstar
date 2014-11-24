@@ -4,7 +4,7 @@ EventEmitter = require './event-emitter'
 class ModelEmitter extends Model
   constructor: (state = {}) ->
     @emitter = new EventEmitter()
-    @emitter.debug = true if @debug
+    @emitter.debug = @debug
     super
 
   on: ->
