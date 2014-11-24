@@ -25,9 +25,7 @@ class Model
     value ?= @state[prop]
 
     validator = @validators[prop]
-    unless validator.call @, value, prop
-      return false
-    true
+    return validator.call @, value, prop
 
   validateAll: ->
     for prop of @validators
@@ -39,7 +37,8 @@ class Model
     unless prop?
       return @transformAll()
 
-    tranform = @transforms[prop]
+    unless (transform = @transforms[prop])?
+      return value
 
     if value?
       transform.call @, value, prop
@@ -61,6 +60,10 @@ class Model
       return false
     @state[prop] = @transform prop, value
     return true
+
+  # Remove property from model
+  remove: (prop, value) ->
+    @state[prop] = undefined
 
   # Update several properties at once
   update: (state) ->
