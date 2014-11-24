@@ -2,6 +2,8 @@ ModelEmitter = require './model-emitter'
 Route        = require './route'
 
 class App extends ModelEmitter
+  prefix: ''
+
   constructor: (state = {}) ->
     super
     @_routes = {}
@@ -9,7 +11,7 @@ class App extends ModelEmitter
 
   addRoute: (path, cb) ->
     unless (route = @_routes[path])?
-      route = new Route path
+      route = new Route @prefix + path
 
     route.callbacks ?= []
     route.callbacks.push cb
