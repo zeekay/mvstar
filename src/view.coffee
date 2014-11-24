@@ -66,10 +66,12 @@ class View
 
       # For each target cache based on selector
       for target in targets
-        [selector, attr] = @_splitTarget target
+        # only cache string-based selector targets
+        if typeof target is 'string'
+          [selector, attr] = @_splitTarget target
 
-        unless @_targets[selector]?
-          @_targets[selector] = @$el.find selector
+          unless @_targets[selector]?
+            @_targets[selector] = @$el.find selector
 
   _computeComputed: (name) ->
     args = []
@@ -99,19 +101,32 @@ class View
     unless Array.isArray targets
       targets = [targets]
 
+    # find formatter
+    formatter = @formatters[name]
+
     # Update each target
     for target in targets
-      [selector, attr] = @_splitTarget target
-
-      # Format value and mutate DOM
-      if (formatter = @formatters[name])?
-        _value = formatter.call @, value, "#{selector} @#{attr}"
+      if typeof target is 'string'
+        @_renderSelector target, value, formatter
       else
-        _value = value
-
-      @_mutateDom selector, attr, _value
-
+        @_renderCallback target, value, name, formatter
     return
+
+  # render a string selector binding
+  _renderSelector: (target, value, formatter) ->
+    [selector, attr] = @_splitTarget target
+
+    # Format value and mutate DOM
+    if formatter?
+      value = formatter.call @, value, "#{selector} @#{attr}"
+
+    @_mutateDom selector, attr, value
+
+  # render a callback binding
+  _renderCallback: (target, value, name, formatter) ->
+    if formatter?
+      value = formatter.call @, value, 'callback'
+    target.call @, value, name
 
   # Split event name / selector
   _splitEvent: (e) ->
