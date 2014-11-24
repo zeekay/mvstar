@@ -178,3 +178,22 @@ describe 'View', ->
 
     it 'should set textarea\'s value correctly', ->
       html.should.contain '<textarea id="textarea-value">value</textarea>'
+
+  describe '#get', ->
+    view = null
+    before ->
+      class View extends mvstar.View
+      view = new View state:
+        a: 'a'
+        b: 'b'
+
+    it 'should get state correctly', ->
+      view.get('a').should.eq 'a'
+      view.get('b').should.eq 'b'
+
+    it 'should set state correctly', ->
+      view.set 'a', 'z'
+      view.get('a').should.eq 'z'
+
+      view.set 'b', 'x'
+      view.get('b').should.eq 'x'
