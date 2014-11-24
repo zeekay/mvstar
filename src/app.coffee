@@ -1,8 +1,9 @@
-Route = require './route'
+ModelEmitter = require './model-emitter'
+Route        = require './route'
 
-class App
+class App extends ModelEmitter
   constructor: (state = {}) ->
-    @state   = state
+    super
     @_routes = {}
     @views   = []
 
@@ -32,18 +33,8 @@ class App
           cb()
     null
 
-  start: ->
+  route: ->
     @setupRoutes()
     @dispatchRoutes()
-    @
-
-  get: (k) ->
-    @state[k]
-
-  set: (k, v) ->
-    @state[k] = v
-
-  delete: (k) ->
-    delete @state[k]
 
 module.exports = App

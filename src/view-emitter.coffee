@@ -2,11 +2,10 @@ View         = require './view'
 EventEmitter = require './event-emitter'
 
 class ViewEmitter extends View
-  constructor: (opts) ->
-    super
-
+  constructor: (opts = {}) ->
     @emitter = new EventEmitter()
     @emitter.debug = true if @debug
+    super
 
   on: ->
     @emitter.on.apply @, arguments
@@ -16,3 +15,5 @@ class ViewEmitter extends View
 
   emit: ->
     @emitter.emit.apply @, arguments
+
+module.exports = ViewEmitter

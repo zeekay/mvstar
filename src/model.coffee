@@ -7,11 +7,10 @@ class Model
     @state = {}
 
     @setDefaults()
+    @transform()
 
     for prop, value of state
-      @state[prop] = value
-
-    @transform()
+      @set prop, value
 
   setDefaults: ->
     for prop, value of @defaults
@@ -22,10 +21,12 @@ class Model
     unless prop?
       return @validateAll()
 
+    unless (validator = @validators[prop])?
+      return true
+
     value ?= @state[prop]
 
-    validator = @validators[prop]
-    return validator.call @, value, prop
+    validator.call @, value, prop
 
   validateAll: ->
     for prop of @validators
