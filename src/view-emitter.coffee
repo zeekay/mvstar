@@ -3,7 +3,7 @@ EventEmitter = require './event-emitter'
 
 class ViewEmitter extends View
   constructor: (opts = {}) ->
-    @emitter = new EventEmitter()
+    @emitter ?= new EventEmitter()
     @emitter.debug = opts.debug ? @debug
     super
 
