@@ -4,16 +4,16 @@ EventEmitter = require './event-emitter'
 class ViewEmitter extends View
   constructor: (opts = {}) ->
     @emitter = new EventEmitter()
-    @emitter.debug = true if @debug
+    @emitter.debug = opts.debug ? @debug
     super
 
   on: ->
-    @emitter.on.apply @, arguments
+    @emitter.on.apply @emitter, arguments
 
   off: ->
-    @emitter.off.apply @, arguments
+    @emitter.off.apply @emitter, arguments
 
   emit: ->
-    @emitter.emit.apply @, arguments
+    @emitter.emit.apply @emitter, arguments
 
 module.exports = ViewEmitter
