@@ -7,7 +7,7 @@ class Model
     @state = {}
 
     @setDefaults()
-    @transform()
+    @transformAll()
 
     for prop, value of state
       @set prop, value
@@ -39,14 +39,11 @@ class Model
     unless (transform = @transforms[prop])?
       return value
 
-    if value?
-      transform.call @, value, prop
-    else
-      @state[prop] = transform.call @, @state[prop], prop
+    transform.call @, value, prop
 
   transformAll: ->
-    for prop of @transforms
-      @transform prop
+    for prop, transform of @transforms
+      @state[prop] = transform.call @, @state[prop], prop
     @
 
   # Get property
