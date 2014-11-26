@@ -24,13 +24,11 @@ class Model
     unless (validator = @validators[prop])?
       return true
 
-    value ?= @state[prop]
-
     validator.call @, value, prop
 
   validateAll: ->
     for prop of @validators
-      unless @validate prop
+      unless @validate prop, @state[prop]
         return false
     true
 

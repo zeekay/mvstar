@@ -48,6 +48,13 @@ describe 'Model', ->
       user.set 'age', '12'
       user.get('age').should.eq 21
 
+    it 'should try to validate null values', ->
+      user = new User()
+      user.set 'age', 1
+      user.set 'age', 2
+      user.set 'age'
+      user.get('age').should.eq 23
+
   describe '#transforms', ->
     it 'should transform defaults', ->
       user = new User()
