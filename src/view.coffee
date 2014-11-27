@@ -58,6 +58,12 @@ class View
       id = ++counter + ''
       prefix ? prefix + id
 
+  _cacheTarget: (selector) ->
+    try
+      @_targets[selector] = @$el.find selector
+    catch err
+      console.error "Unable to cache selector "#{selector}" for #{@constructor.name}"
+
   # Find and cache binding targets.
   _cacheTargets: ->
     for name, targets of @bindings
@@ -70,8 +76,8 @@ class View
         if typeof target is 'string'
           [selector, attr] = @_splitTarget target
 
-          unless @_targets[selector]?
-            @_targets[selector] = @$el.find selector
+          @_cacheTarget selector unless @_targets[selector]?
+    return
 
   _computeComputed: (name) ->
     args = []
