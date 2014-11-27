@@ -26,7 +26,7 @@ class View
         @_watchers[name].push watcher
 
     # Get or create element based on template/opts
-    @el = @$el = @_getEl opts
+    @el = @_getEl opts
 
     # find all elements in DOM.
     @_cacheTargets()
@@ -39,8 +39,8 @@ class View
     # 3. Pass it in as `opts.$el`
     # 4. Find it in DOM using @el selector.
 
-    # Use opts.$el if provided
-    return opts.$el if opts.$el
+    # Use opts.el if provided
+    return opts.el if opts.el
 
     # Generate template selector to create DOM
     return $($(@template).html()) if @template
