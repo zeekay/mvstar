@@ -9,7 +9,6 @@ class View
   mutators: require './mutators'
 
   constructor: (opts = {}) ->
-    @el       ?= opts.el
     @id        = @_nextId @constructor.name
     @state     = opts.state ? {}
     @_events   = {}
@@ -17,7 +16,7 @@ class View
     @_watchers = {}
 
     # Generate list of watchers per name
-    for watcher, watched in @watching
+    for watcher, watched of @watching
       unless Array.isArray watched
         watched = [watched]
 
@@ -26,7 +25,7 @@ class View
         @_watchers[name].push watcher
 
     # Get or create element based on template/opts
-    @el = @_getEl opts
+    @el = @$el = @_getEl opts
 
     # find all elements in DOM.
     @_cacheTargets()
@@ -40,7 +39,7 @@ class View
     # 4. Find it in DOM using @el selector.
 
     # Use opts.el if provided
-    return opts.el if opts.el
+    return opts.el if opts.el?
 
     # Generate template selector to create DOM
     return $($(@template).html()) if @template
@@ -62,7 +61,9 @@ class View
     try
       @_targets[selector] = @$el.find selector
     catch err
-      console.error "Unable to cache selector "#{selector}" for #{@constructor.name}"
+      console.log err
+      # console.error "Unable to cache selector '#{selector}' for '#{@constructor.name}'"
+    return
 
   # Find and cache binding targets.
   _cacheTargets: ->
@@ -76,7 +77,8 @@ class View
         if typeof target is 'string'
           [selector, attr] = @_splitTarget target
 
-          @_cacheTarget selector unless @_targets[selector]?
+          unless @_targets[selector]?
+            @_cacheTarget selector
     return
 
   _computeComputed: (name) ->
@@ -182,6 +184,7 @@ class View
     if (watchers = @_watchers[name])?
       for watcher in watchers
         @_renderBindings watcher
+    return
 
   # Render current state according to bindings.
   render: (state) ->
