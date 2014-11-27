@@ -9,6 +9,9 @@ class App extends ModelEmitter
     @_routes = {}
     @views   = []
 
+    for k,v of state
+      @state[k] = v
+
   addRoute: (path, cb) ->
     unless (route = @_routes[path])?
       route = new Route @prefix + path
