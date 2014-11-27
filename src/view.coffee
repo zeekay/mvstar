@@ -10,10 +10,13 @@ class View
 
   constructor: (opts = {}) ->
     @id        = @_nextId @constructor.name
-    @state     = opts.state ? {}
     @_events   = {}
     @_targets  = {}
     @_watchers = {}
+    @state = {}
+
+    for k,v of opts.state
+      @state[k] = v
 
     # Generate list of watchers per name
     for watcher, watched of @watching
