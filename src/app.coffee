@@ -14,7 +14,7 @@ class App extends ModelEmitter
 
   addRoute: (path, cb) ->
     unless (route = @_routes[path])?
-      route = new Route @prefix + path
+      route = new Route path, prefix: @prefix
 
     route.callbacks ?= []
     route.callbacks.push cb
