@@ -177,7 +177,7 @@ describe 'View', ->
       html.should.contain '<textarea id="textarea-text">value</textarea>'
 
     it 'should set textarea\'s value correctly', ->
-      html.should.contain '<textarea id="textarea-value">value</textarea>'
+      view.el.find('#textarea-value').val().should.eq 'value'
 
   describe '#get', ->
     view = null
