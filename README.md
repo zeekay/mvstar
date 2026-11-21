@@ -1,4 +1,7 @@
 # mvstar [![Build Status](https://travis-ci.org/zeekay/mvstar.svg?branch=master)](https://travis-ci.org/zeekay/mvstar)
+
+[![Open in Hanzo](https://hanzo.app/badges/open-in-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/zeekay/mvstar&ref=master&action=open) [![Edit with Hanzo](https://hanzo.app/badges/edit-with-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/zeekay/mvstar&ref=master&action=edit)
+
 MV★ framework. No fancy virtual DOM. Minimal bits needed for sensible
 client-side applications. Declarative one-way databinding. Event emitters.
 Simple routing. Computed properties. Completely explicit. No dependencies
